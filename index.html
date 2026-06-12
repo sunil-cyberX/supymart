@@ -25,50 +25,29 @@
 <body>
   <div id="splash">
     <div class="spin"></div>
-    <p class="stitle">SupyMart</p>
+    <p class="stitle">SupyMart &#129498;&#8205;&#9792;&#65039;</p>
     <p class="ssub">Loading...</p>
   </div>
   <div id="root"></div>
-
-  <!-- React -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
-  
-  <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
-
-  <!-- Lucide Icons - Map ALL icons to window scope -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.1/umd/lucide.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
   <script>
-    // Map all lucide icons to window
-    if(window.lucide){
-      Object.keys(window.lucide).forEach(k=>{window[k]=window.lucide[k];});
-    }
-    // Setup React hooks globally
+    if(window.lucide){Object.keys(window.lucide).forEach(k=>{window[k]=window.lucide[k];});}
     const {useState,useEffect,useRef,useCallback,useMemo}=React;
-    // Hide splash
-    function hideSplash(){
+    function hideSplash(){const s=document.getElementById("splash");if(s){s.classList.add("hide");setTimeout(()=>s.remove(),500);}}
+    window.onerror=function(){
       const s=document.getElementById("splash");
-      if(s){s.classList.add("hide");setTimeout(()=>s.remove(),500);}
-    }
-    // Error handler
-    window.onerror=function(msg,src,line,col,err){
-      console.error("App error:",msg,line);
-      const s=document.getElementById("splash");
-      if(s){
-        s.innerHTML='<div style="padding:30px;text-align:center;color:white"><p style="font-size:40px">&#9888;&#65039;</p><p style="font-size:16px;font-weight:900;margin:16px 0">Refresh karo</p><button onclick="location.reload()" style="background:white;color:#ea580c;border:none;padding:12px 28px;border-radius:999px;font-weight:900;font-size:15px;cursor:pointer">&#8635; Refresh</button></div>';
-      }
+      if(s)s.innerHTML='<div style="padding:30px;text-align:center;color:white"><p style="font-size:40px">&#9888;&#65039;</p><p style="font-size:16px;font-weight:900;margin:16px 0">Refresh karo</p><button onclick="location.reload()" style="background:white;color:#ea580c;border:none;padding:12px 28px;border-radius:999px;font-weight:900;font-size:15px;cursor:pointer">&#8635;</button></div>';
     };
   </script>
-
-  <!-- Babel -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
-
-  <!-- App Code -->
   <script type="text/babel" data-presets="react">
+
 import { Search, Home, User, Store, X, Star, Heart, Trash2,
   Edit2, CheckCircle, Zap, ShoppingCart, MapPin, ChevronRight,
   Package, MessageCircle, Gift, Percent, ShoppingBag,
@@ -2296,43 +2275,7 @@ function AdminPanel({onBack,lang="en"}) {
   );
 }
 
-const MAINTENANCE_MODE = false;
-const MAINTENANCE_KEY = "SM@8959#owner$2025";
-
 export default function App() {
-  const [unlocked, setUnlocked] = React.useState(()=>{
-    try{return localStorage.getItem("sm_unlock")===MAINTENANCE_KEY;}catch{return false;}
-  });
-  if(MAINTENANCE_MODE && !unlocked){
-    return(
-      <div style={{minHeight:"100vh",background:"linear-gradient(145deg,#0f172a,#1e293b)",display:"flex",alignItems:"center",justifyContent:"center",padding:"24px"}}>
-        <div style={{maxWidth:"360px",width:"100%",textAlign:"center"}}>
-          <div style={{fontSize:"64px",marginBottom:"16px"}}>🔒</div>
-          <h1 style={{color:"white",fontSize:"22px",fontWeight:900,marginBottom:"8px"}}>Coming Soon</h1>
-          <p style={{color:"rgba(255,255,255,0.5)",fontSize:"14px",marginBottom:"32px"}}>SupyMart abhi maintenance mein hai. Jald hi aayega!</p>
-          <input
-            id="unlock-input"
-            type="password"
-            placeholder="Owner access code"
-            style={{width:"100%",padding:"12px 16px",borderRadius:"12px",border:"1.5px solid rgba(255,255,255,0.1)",background:"rgba(255,255,255,0.05)",color:"white",fontSize:"14px",outline:"none",boxSizing:"border-box",marginBottom:"12px"}}
-          />
-          <button
-            style={{width:"100%",padding:"13px",borderRadius:"12px",background:"linear-gradient(135deg,#ea580c,#f97316)",border:"none",color:"white",fontWeight:900,fontSize:"15px",cursor:"pointer"}}
-            onClick={()=>{
-              const val=document.getElementById("unlock-input").value;
-              if(val===MAINTENANCE_KEY){
-                try{localStorage.setItem("sm_unlock",MAINTENANCE_KEY);}catch{}
-                setUnlocked(true);
-              } else {
-                document.getElementById("unlock-input").style.border="1.5px solid #ef4444";
-                setTimeout(()=>{document.getElementById("unlock-input").style.border="1.5px solid rgba(255,255,255,0.1)";},1000);
-              }
-            }}
-          >Enter</button>
-        </div>
-      </div>
-    );
-  }
 
   const [lang,sLang]=useState(()=>ls("bz_lang","en"));
   const [vLangMenu,sVLM]=useState(false);
@@ -4406,9 +4349,7 @@ export default function App() {
   );
 }
 
-  // Mount
-  const domRoot=ReactDOM.createRoot(document.getElementById("root"));
-  domRoot.render(React.createElement(App));
+  ReactDOM.createRoot(document.getElementById("root")).render(React.createElement(App));
   hideSplash();
   </script>
 </body>
