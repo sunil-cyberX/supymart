@@ -6,86 +6,69 @@
   <meta name="theme-color" content="#ea580c"/>
   <meta name="apple-mobile-web-app-capable" content="yes"/>
   <meta name="apple-mobile-web-app-title" content="SupyMart"/>
-  <title>SupyMart</title>
   <link rel="manifest" href="manifest.json"/>
+  <title>SupyMart</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css"/>
   <style>
     *{-webkit-tap-highlight-color:transparent;box-sizing:border-box;margin:0;padding:0;}
-    body{background:#7c2d12;font-family:system-ui,sans-serif;}
-    #root{max-width:480px;margin:0 auto;min-height:100vh;background:#fff8f3;}
+    body{background:#fff8f3;}
+    #root{max-width:480px;margin:0 auto;min-height:100vh;}
     ::-webkit-scrollbar{display:none;}
-    #splash{
-      position:fixed;inset:0;
-      background:linear-gradient(145deg,#7c2d12,#c2410c,#ea580c);
-      display:flex;flex-direction:column;
-      align-items:center;justify-content:center;
-      z-index:99999;transition:opacity 0.5s;
-    }
-    .spin{
-      width:52px;height:52px;
-      border:4px solid rgba(255,255,255,0.25);
-      border-top:4px solid white;
-      border-radius:50%;
-      animation:spin 0.9s linear infinite;
-    }
+    #splash{position:fixed;inset:0;background:linear-gradient(145deg,#7c2d12,#ea580c);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:99999;transition:opacity 0.5s;}
+    #splash.hide{opacity:0;pointer-events:none;}
+    .spin{width:52px;height:52px;border:4px solid rgba(255,255,255,0.25);border-top:4px solid white;border-radius:50%;animation:spin 0.9s linear infinite;}
     @keyframes spin{to{transform:rotate(360deg)}}
-    .splash-title{color:white;font-size:26px;font-weight:900;margin-top:20px;letter-spacing:-0.5px;}
-    .splash-sub{color:rgba(255,255,255,0.65);font-size:13px;margin-top:8px;}
-    .splash-dots{display:flex;gap:6px;margin-top:20px;}
-    .splash-dots span{
-      width:8px;height:8px;border-radius:50%;
-      background:rgba(255,255,255,0.4);
-      animation:dot 1.2s ease-in-out infinite;
-    }
-    .splash-dots span:nth-child(2){animation-delay:0.2s;}
-    .splash-dots span:nth-child(3){animation-delay:0.4s;}
-    @keyframes dot{0%,80%,100%{transform:scale(0.6);opacity:0.4}40%{transform:scale(1);opacity:1}}
+    .stitle{color:white;font-size:26px;font-weight:900;margin-top:18px;}
+    .ssub{color:rgba(255,255,255,0.65);font-size:13px;margin-top:6px;}
   </style>
 </head>
 <body>
   <div id="splash">
     <div class="spin"></div>
-    <p class="splash-title">SupyMart &#129498;&#8205;&#9792;&#65039;</p>
-    <p class="splash-sub">Aapki local dukaan, online</p>
-    <div class="splash-dots"><span></span><span></span><span></span></div>
+    <p class="stitle">SupyMart</p>
+    <p class="ssub">Loading...</p>
   </div>
   <div id="root"></div>
 
-  <!-- Load all scripts first -->
+  <!-- React -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.1/umd/lucide.min.js"></script>
+  
+  <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
 
+  <!-- Lucide Icons - Map ALL icons to window scope -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.1/umd/lucide.min.js"></script>
   <script>
-    // Setup globals before app loads
-    if(window.lucide){Object.keys(window.lucide).forEach(k=>{window[k]=window.lucide[k];});}
+    // Map all lucide icons to window
+    if(window.lucide){
+      Object.keys(window.lucide).forEach(k=>{window[k]=window.lucide[k];});
+    }
+    // Setup React hooks globally
     const {useState,useEffect,useRef,useCallback,useMemo}=React;
-
+    // Hide splash
     function hideSplash(){
       const s=document.getElementById("splash");
-      if(s){s.style.opacity="0";setTimeout(()=>s.remove(),500);}
+      if(s){s.classList.add("hide");setTimeout(()=>s.remove(),500);}
     }
-
     // Error handler
     window.onerror=function(msg,src,line,col,err){
-      document.getElementById("splash").innerHTML=
-        "<div style='padding:30px;text-align:center;color:white'>" +
-        "<p style='font-size:40px;margin-bottom:16px'>&#9888;&#65039;</p>" +
-        "<p style='font-size:18px;font-weight:900;margin-bottom:10px'>App load nahi hua</p>" +
-        "<p style='font-size:13px;opacity:0.8;margin-bottom:20px'>Browser refresh karo ya Chrome use karo</p>" +
-        "<button onclick='location.reload()' style='background:white;color:#ea580c;border:none;padding:12px 28px;border-radius:999px;font-weight:900;font-size:15px;cursor:pointer'>&#8635; Refresh</button>" +
-        "</div>";
-      return false;
+      console.error("App error:",msg,line);
+      const s=document.getElementById("splash");
+      if(s){
+        s.innerHTML='<div style="padding:30px;text-align:center;color:white"><p style="font-size:40px">&#9888;&#65039;</p><p style="font-size:16px;font-weight:900;margin:16px 0">Refresh karo</p><button onclick="location.reload()" style="background:white;color:#ea580c;border:none;padding:12px 28px;border-radius:999px;font-weight:900;font-size:15px;cursor:pointer">&#8635; Refresh</button></div>';
+      }
     };
   </script>
 
-  <!-- App code - compiled by Babel -->
-  <script type="text/babel" data-presets="react,env" data-type="module">
+  <!-- Babel -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+
+  <!-- App Code -->
+  <script type="text/babel" data-presets="react">
 import { Search, Home, User, Store, X, Star, Heart, Trash2,
   Edit2, CheckCircle, Zap, ShoppingCart, MapPin, ChevronRight,
   Package, MessageCircle, Gift, Percent, ShoppingBag,
@@ -93,7 +76,7 @@ import { Search, Home, User, Store, X, Star, Heart, Trash2,
   Share2, Copy, QrCode, Globe, ExternalLink,
   Shield, LogOut, RefreshCw, Radio, BarChart2, Settings, Phone, Clock } from "lucide-react";
 
-const ADMIN="919800000000";
+const ADMIN="918959500000";
 
 // ── FIREBASE CONFIG ──
 const FB_CONFIG={
@@ -1712,7 +1695,7 @@ function TermsPopup({lang,onClose}) {
 }
 
 
-const ADMIN_PASS = "admin@123"; // Deploy ke baad code mein badlein!
+const ADMIN_PASS = "8959500"; // Deploy ke baad code mein badlein!
 const fmtTime = (ms) => { const d = Math.floor(ms / 86400000); const h = Math.floor((ms % 86400000) / 3600000); return d > 0 ? d + "d " + h + "h" : h + "h left"; };
 
 const AGR = {
@@ -1855,7 +1838,7 @@ function AdminPanel({onBack,lang="en"}) {
           <ACard>
             <p className="text-white/40 text-xs font-bold mb-2">Admin Password</p>
             <input className={AC.inp} placeholder="Password..." value={pwd} type="password" onChange={e=>setPwd(e.target.value)} onKeyDown={e=>e.key==="Enter"&&handleLogin()}/>
-            <p className="text-white/20 text-[10px] mt-1.5 mb-3">Default: admin@123</p>
+            <p className="text-white/20 text-[10px] mt-1.5 mb-3">Admin Login</p>
             {authErr&&<div className="rounded-xl p-2.5 mb-3" style={{background:"rgba(239,68,68,0.12)",border:"1px solid rgba(239,68,68,0.2)"}}><p className="text-red-400 text-xs font-bold">{authErr}</p></div>}
             <button className="w-full py-3.5 rounded-2xl font-black text-white" style={{background:AGR.primary}} onClick={handleLogin}>🔐 Login</button>
           </ACard>
@@ -2313,7 +2296,44 @@ function AdminPanel({onBack,lang="en"}) {
   );
 }
 
+const MAINTENANCE_MODE = false;
+const MAINTENANCE_KEY = "SM@8959#owner$2025";
+
 export default function App() {
+  const [unlocked, setUnlocked] = React.useState(()=>{
+    try{return localStorage.getItem("sm_unlock")===MAINTENANCE_KEY;}catch{return false;}
+  });
+  if(MAINTENANCE_MODE && !unlocked){
+    return(
+      <div style={{minHeight:"100vh",background:"linear-gradient(145deg,#0f172a,#1e293b)",display:"flex",alignItems:"center",justifyContent:"center",padding:"24px"}}>
+        <div style={{maxWidth:"360px",width:"100%",textAlign:"center"}}>
+          <div style={{fontSize:"64px",marginBottom:"16px"}}>🔒</div>
+          <h1 style={{color:"white",fontSize:"22px",fontWeight:900,marginBottom:"8px"}}>Coming Soon</h1>
+          <p style={{color:"rgba(255,255,255,0.5)",fontSize:"14px",marginBottom:"32px"}}>SupyMart abhi maintenance mein hai. Jald hi aayega!</p>
+          <input
+            id="unlock-input"
+            type="password"
+            placeholder="Owner access code"
+            style={{width:"100%",padding:"12px 16px",borderRadius:"12px",border:"1.5px solid rgba(255,255,255,0.1)",background:"rgba(255,255,255,0.05)",color:"white",fontSize:"14px",outline:"none",boxSizing:"border-box",marginBottom:"12px"}}
+          />
+          <button
+            style={{width:"100%",padding:"13px",borderRadius:"12px",background:"linear-gradient(135deg,#ea580c,#f97316)",border:"none",color:"white",fontWeight:900,fontSize:"15px",cursor:"pointer"}}
+            onClick={()=>{
+              const val=document.getElementById("unlock-input").value;
+              if(val===MAINTENANCE_KEY){
+                try{localStorage.setItem("sm_unlock",MAINTENANCE_KEY);}catch{}
+                setUnlocked(true);
+              } else {
+                document.getElementById("unlock-input").style.border="1.5px solid #ef4444";
+                setTimeout(()=>{document.getElementById("unlock-input").style.border="1.5px solid rgba(255,255,255,0.1)";},1000);
+              }
+            }}
+          >Enter</button>
+        </div>
+      </div>
+    );
+  }
+
   const [lang,sLang]=useState(()=>ls("bz_lang","en"));
   const [vLangMenu,sVLM]=useState(false);
   const t=k=>tl(lang,k);
@@ -4386,10 +4406,9 @@ export default function App() {
   );
 }
 
-
-  // Mount app
-  const root = ReactDOM.createRoot(document.getElementById("root"));
-  root.render(React.createElement(App));
+  // Mount
+  const domRoot=ReactDOM.createRoot(document.getElementById("root"));
+  domRoot.render(React.createElement(App));
   hideSplash();
   </script>
 </body>
